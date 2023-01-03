@@ -33,7 +33,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "fr.namec.dev",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -62,7 +62,8 @@
         "fullscreen": false,
         "height": 600,
         "resizable": true,
-        "title": "aquarium",
+        "maximized": true,
+        "title": "Viewer | SSL",
         "width": 800
       }
     ]

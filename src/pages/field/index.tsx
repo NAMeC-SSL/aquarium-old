@@ -212,8 +212,7 @@ function draw_line_vertical(ctx) {
     ctx.stroke();
     ctx.closePath();
 }
-
-export default function Page() {
+function Field() {
     const canvasRef : Ref<HTMLCanvasElement> = useRef(null);
 
     useEffect(() => {
@@ -245,3 +244,5 @@ export default function Page() {
         </canvas>
     )
 }
+
+export default Field;
