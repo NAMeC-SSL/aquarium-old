@@ -157,9 +157,9 @@ function draw_text(ctx, x,y, id) {
     );
 
     ctx.fillStyle = 'black';
-    ctx.font = 'normal normal 0.009rem arial';
-    ctx.scale(1, -1);
-    ctx.fillText(id, -0.085 / 2, 0.085 / 2);
+    ctx.font = '1px serif';
+    ctx.scale(0.15, -0.15);
+    ctx.fillText(id, -0.085 * 4 , 4 * 0.085);
 
     ctx.restore();
 
