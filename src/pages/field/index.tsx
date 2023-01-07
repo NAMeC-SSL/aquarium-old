@@ -1,24 +1,15 @@
-'use client';
-
 import {Ref, useEffect, useRef} from "react";
+import {useSelector} from "react-redux";
+// TODO : Rename components
+import { Field as FieldType} from '../../store/ssl'
+
+let field = {} as FieldType
 
 const ball = {
     x : 0,
     y: 0
 }
-const field = {
-    width: 6,
-    length: 9,
-    center_radius: 0.5,
-    goal: {
-        width: 1.0,
-        depth: 0.2,
-    },
-    penalty: {
-        width: 2.0,
-        depth: 1.0,
-    },
-};
+
 
 const opponents = [
     {
@@ -122,6 +113,7 @@ const allies = [
 ];
 
 function init_canvas(context: CanvasRenderingContext2D) {
+
     context.canvas.width = window.innerWidth - 30;
     context.canvas.height = window.innerHeight - 30;
     clear_canvas(context);
@@ -213,6 +205,9 @@ function draw_line_vertical(ctx) {
     ctx.closePath();
 }
 function Field() {
+    field = useSelector((state) => state.field.field);
+    console.log(field);
+
     const canvasRef : Ref<HTMLCanvasElement> = useRef(null);
 
     useEffect(() => {

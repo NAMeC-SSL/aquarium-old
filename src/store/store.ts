@@ -1,5 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
+import  fieldReducer from './field';
 
 export const store = configureStore({
-    reducer:  {}
+    reducer:  {
+        field: fieldReducer,
+    }
 })
