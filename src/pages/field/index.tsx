@@ -205,6 +205,7 @@ function draw_line_vertical(ctx) {
     ctx.closePath();
 }
 function Field() {
+    // @ts-ignore
     field = useSelector((state) => state.field.field);
     console.log(field);
 
