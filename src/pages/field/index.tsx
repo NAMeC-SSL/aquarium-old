@@ -35,8 +35,8 @@ function draw_shape(ctx, x,y, orientation) {
         x,
         y,
         0.085,
-        -orientation + 0.75,
-        -orientation + Math.PI * 2 - 0.75
+        orientation + 0.75,
+        orientation + Math.PI * 2 - 0.75
     );
     ctx.fill();
     ctx.closePath();
