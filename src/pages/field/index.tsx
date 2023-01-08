@@ -1,116 +1,17 @@
 import {Ref, useEffect, useRef} from "react";
 import {useSelector} from "react-redux";
 // TODO : Rename components
-import { Field as FieldType} from '../../store/ssl'
+import {Ball, Field as FieldType, Robot} from '../../store/ssl'
+import {RootState} from "../../store/store";
 
 let field = {} as FieldType
 
-const ball = {
-    x : 0,
-    y: 0
-}
+let ball = {} as Ball;
 
 
-const opponents = [
-    {
-        id: 0,
-        position: {
-            x: 1.5,
-            y: 1.12,
-            theta: 3.14,
-        },
-    },
-    {
-        id: 1,
-        position: {
-            x: 1.5,
-            y: 0,
-            theta: 3.14,
-        },
-    },
-    {
-        id: 2,
-        position: {
-            x: 1.5,
-            y: -1.12,
-            theta: 3.14,
-        },
-    },
-    {
-        id: 3,
-        position: {
-            x: 0.55,
-            y: 0,
-            theta: 3.14,
-        },
-    },
-    {
-        id: 4,
-        position: {
-            x: 2.5,
-            y: 0,
-            theta: 3.14,
-        },
-    },
-    {
-        id: 5,
-        position: {
-            x: 3.6,
-            y: 0,
-            theta: 3.14,
-        },
-    },
-];
-const allies = [
-    {
-        id: 0,
-        position: {
-            x: -1.5,
-            y: 1.12,
-            theta: 0,
-        },
-    },
-    {
-        id: 1,
-        position: {
-            x: -1.5,
-            y: 0,
-            theta: 0,
-        },
-    },
-    {
-        id: 2,
-        position: {
-            x: -1.5,
-            y: -1.12,
-            theta: 0,
-        },
-    },
-    {
-        id: 3,
-        position: {
-            x: -0.55,
-            y: 0,
-            theta: 0,
-        },
-    },
-    {
-        id: 4,
-        position: {
-            x: -2.5,
-            y: 0,
-            theta: 0,
-        },
-    },
-    {
-        id: 5,
-        position: {
-            x: -3.6,
-            y: 0,
-            theta: 0,
-        },
-    },
-];
+let opponents = [] as Robot[];
+
+let allies = [] as Robot[];
 
 function init_canvas(context: CanvasRenderingContext2D) {
 
@@ -122,15 +23,17 @@ function init_canvas(context: CanvasRenderingContext2D) {
 
     let scale_factor = (x+y) / 2;
 
+    context.translate(context.canvas.width / 2  , context.canvas.height / 2);
+
     context.scale(scale_factor, -scale_factor);
 
-    context.translate(context.canvas.width / 2 / scale_factor , -context.canvas.height / 2 / scale_factor );
+   // context.scale(1,-1);
 }
 function draw_shape(ctx, x,y, orientation) {
     ctx.beginPath();
     ctx.arc(
         x,
-        -y,
+        y,
         0.085,
         -orientation + 0.75,
         -orientation + Math.PI * 2 - 0.75
@@ -145,7 +48,7 @@ function draw_text(ctx, x,y, id) {
     ctx.save();
     ctx.translate(
         x,
-        -y
+        y
     );
 
     ctx.fillStyle = 'black';
@@ -159,31 +62,32 @@ function draw_text(ctx, x,y, id) {
 function draw_robots(context) {
     opponents.forEach((opponent) => {
         context.fillStyle = "#dbd81d";
-        draw_shape(context, opponent.position.x, opponent.position.y, opponent.position.theta);
-        draw_text(context, opponent.position.x, opponent.position.y, opponent.id);
+        draw_shape(context, opponent.x, opponent.y, opponent.orientation);
+        draw_text(context, opponent.x, opponent.y, opponent.id);
     })
 
     allies.forEach((opponent) => {
         context.fillStyle = "#249ed6";
-        draw_shape(context, opponent.position.x, opponent.position.y, opponent.position.theta);
-        draw_text(context, opponent.position.x, opponent.position.y, opponent.id);
+        draw_shape(context, opponent.x, opponent.y, opponent.orientation);
+        draw_text(context, opponent.x, opponent.y, opponent.id);
     })
 }
 
 function draw_penalty(ctx) {
-    ctx.strokeRect((field.length / 2) - field.penalty.depth, -field.penalty.width / 2, field.penalty.depth, field.penalty.width);
+    ctx.strokeRect((field.length / 2) - field.penalty_depth, -field.penalty_width / 2, field.penalty_depth, field.penalty_width);
 
     // Right
-    ctx.strokeRect(- (field.length / 2), - field.penalty.width / 2, field.penalty.depth, field.penalty.width);
+    ctx.strokeRect(- (field.length / 2), - field.penalty_width / 2, field.penalty_depth, field.penalty_width);
 
 }
 
 function draw_goal(ctx) {
-    ctx.strokeRect(field.length / 2, -field.goal.width / 2, field.goal.depth, field.goal.width);
-    ctx.strokeRect(-(field.length / 2) - field.goal.depth, - field.goal.width / 2, field.goal.depth, field.goal.width);
+    ctx.strokeRect(field.length / 2, -field.goal_width / 2, field.goal_depth, field.goal_width);
+    ctx.strokeRect(-(field.length / 2) - field.goal_depth, - field.goal_width / 2, field.goal_depth, field.goal_width);
 }
 
 function draw_ball(ctx) {
+    console.log(ball);
     ctx.beginPath();
     ctx.strokeStyle = 'orange';
     ctx.fillStyle = 'orange';
@@ -206,31 +110,38 @@ function draw_line_vertical(ctx) {
 }
 function Field() {
     // @ts-ignore
-    field = useSelector((state) => state.field.field);
-    console.log(field);
+    field = useSelector((state: RootState) => state.field.field);
+    allies = useSelector((state: RootState) => state.robots.allies);
+    opponents = useSelector((state : RootState) => state.robots.opponents);
+    ball = useSelector((state: RootState) => state.ball.ball);
 
     const canvasRef : Ref<HTMLCanvasElement> = useRef(null);
 
     useEffect(() => {
-        const canvas = canvasRef.current
-        const context = canvas.getContext('2d');
-        //Our first draw
-        init_canvas(context);
+        const id = setInterval(async () => {
+            const canvas = canvasRef.current
+            const context = canvas.getContext('2d');
+            //Our first draw
+            init_canvas(context);
 
-        context.strokeStyle = "#fff";
-        context.lineWidth = 0.03;
+            console.log(opponents)
+
+            context.strokeStyle = "#fff";
+            context.lineWidth = 0.03;
 
 
-        context.strokeRect(-field.length / 2, -field.width / 2, field.length, field.width);
+            context.strokeRect(-field.length / 2, -field.width / 2, field.length, field.width);
 
-        draw_robots(context);
+            draw_robots(context);
 
-        draw_goal(context);
-        draw_penalty(context);
-        draw_line_vertical(context);
+            draw_goal(context);
+            draw_penalty(context);
+            draw_line_vertical(context);
 
-        draw_ball(context);
+            draw_ball(context);
 
+        }, 16);
+        return () => clearInterval(id);
        // context.strokeRect(0, 0, x * 9, y * 6)
     }, []);
 

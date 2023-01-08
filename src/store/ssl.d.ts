@@ -3,14 +3,10 @@ export interface Field {
     length: number,
     width: number,
     center_radius: number,
-    goal: {
-        width: number,
-        depth: number,
-    },
-    penalty: {
-        width: number,
-        depth: number,
-    },
+    goal_width: number,
+    goal_depth: number,
+    penalty_width: number,
+    penalty_depth: number,
 }
 
 interface Position {
@@ -21,9 +17,8 @@ interface Position {
 export interface Ball extends Position {
 }
 
-export interface Robot {
+export interface Robot extends Position {
     id: number,
-    position: Position,
     orientation : number
 }
 
@@ -32,9 +27,10 @@ enum Color {
     BLUE=1,
 }
 
-export interface packet_IATOVIEWER {
+export interface tools_packet {
     field: Field,
     allies: [Robot], // TODO : Mark 16 max
     opponents: [Robot],
+    ball: Ball,
     yellow: Color
 }

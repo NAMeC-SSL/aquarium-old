@@ -1,19 +1,15 @@
 import {Field} from "./ssl";
-import {createSlice} from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 const initialState = {
     field : {
         length : 9.0,
         width: 6.0,
         center_radius: 1.0,
-        goal: {
-            width: 1.0,
-            depth: 0.3
-        },
-        penalty : {
-            width: 2.0,
-            depth: 1.0
-        }
+        goal_width: 1.0,
+        goal_depth: 0.3,
+        penalty_width: 2.0,
+        penalty_depth: 1.0
     } as Field
 }
 
@@ -22,9 +18,13 @@ const fieldSlice = createSlice({
     name: 'field',
     initialState,
     reducers: {
+        updateField(state, action: PayloadAction<Field>) {
+            // TODO: Maybe look if it's equal ?
+            state.field = action.payload;
+        }
     }
 })
 
-// export const {update_field } = counterSlice.actions;
+export const { updateField } = fieldSlice.actions;
 
 export default fieldSlice.reducer;

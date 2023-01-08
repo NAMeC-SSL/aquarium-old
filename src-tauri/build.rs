@@ -26,6 +26,8 @@ fn main() -> Result<(), Error> {
 
     let descriptor_set = std::fs::read(descriptor_path)?;
     pbjson_build::Builder::new()
+        .emit_fields()
+        .preserve_proto_field_names()
         .register_descriptors(&descriptor_set)?
         .build(&[".tools_packet"])?;
     Ok(())
