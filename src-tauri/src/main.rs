@@ -1,7 +1,10 @@
-mod protobuf;
-
+use prost::Message;
+use std::io::Cursor;
 use std::net::UdpSocket;
 use std::sync::Mutex;
+use tauri::Error;
+
+use aquarium::tools_packet;
 
 struct State {
     mutex: Mutex<SocketState>,
@@ -13,33 +16,25 @@ struct SocketState {
 
 const BUFFER_SIZE: usize = 4096;
 
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
-
-#[tauri::command]
-fn receive_packet(state: tauri::State<State>) {
+fn receive_packet(state: tauri::State<State>) -> Result<tools_packet::SoftwarePacket, Error> {
     let socket_state = state.mutex.lock().unwrap();
     let mut buf = [0u8; BUFFER_SIZE];
-    match socket_state.socket.recv_from(&mut buf) {
-        Ok((_p_size, _)) => {
-            /*let packet = ToolsSoftwarePacket::decode(Cursor::new(&buf[0..p_size]))
-            .expect("Error - Decoding the packet");*/
-        }
-        Err(_err) => {}
-    };
-    // let p_size = 16;
+    let p_size = socket_state.socket.recv(&mut buf)?;
+    let packet = tools_packet::SoftwarePacket::decode(Cursor::new(&buf[0..p_size]))
+        .expect("Error - Decoding the packet");
+    
+    Ok(packet)
 }
 
-/*async fn socket_run() {
+/*async fn socket_run() {/*  */
     let sock = UdpSocket::bind(format!("127.0.0.1:{}", 10100));
     let mut buf = [0; 1024];
 
     loop {
         let (len, addr) = sock.recv_from(&mut buf);
         println!("{:?} bytes received from {:?}", len, addr);
+        // Here sleep
     }
 }
 */
@@ -52,7 +47,7 @@ fn main() {
         .manage(State {
             mutex: Mutex::new(SocketState { socket: sock }),
         })
-        .invoke_handler(tauri::generate_handler![greet, receive_packet])
+        .invoke_handler(tauri::generate_handler![receive_packet])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

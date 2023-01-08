@@ -1,24 +1,40 @@
 extern crate prost_build;
 
-use std::path::{Path, PathBuf};
+use std::env;
+use std::io::Error;
+use std::path::PathBuf;
 
-fn compile_packet(filename: &str, protos: &[impl AsRef<Path>], includes: &[impl AsRef<Path>]) {
-    let mut build = prost_build::Config::new();
-
-    build
-        .default_package_filename(filename)
-        //.out_dir(PathBuf::from("src/protobuf/"))
-        .compile_protos(protos, includes)
-        .expect(format!("Failed to compile {} protobuf files", filename).as_str());
-}
-
-fn main() {
+fn main() -> Result<(), Error> {
     tauri_build::build();
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("protobuf/tools");
+    let proto_files = vec![root.join("software.proto")];
 
+    for proto_file in &proto_files {
+        println!("cargo:rerun-if-changed={}", proto_file.display());
+    }
+
+    let descriptor_path = PathBuf::from(env::var("OUT_DIR").unwrap()).join("proto_descriptor.bin");
+
+    prost_build::Config::new()
+        // Save descriptors to file
+        .file_descriptor_set_path(&descriptor_path)
+        // Override prost-types with pbjson-types
+        .compile_well_known_types()
+        .extern_path(".google.protobuf", "::pbjson_types")
+        // Generate prost structs
+        .compile_protos(&proto_files, &[root])?;
+
+    let descriptor_set = std::fs::read(descriptor_path)?;
+    pbjson_build::Builder::new()
+        .register_descriptors(&descriptor_set)?
+        .build(&[".tools_packet"])?;
+    Ok(())
     /*compile_packet(
         "tools_packet",
-        &["protobuf/tools/tools.proto"],
+        &[
+            "protobuf/tools/tools.proto",
+            "protobuf/tools/software.proto",
+        ],
         &["protobuf/tools"],
     );*/
-    prost_build::compile_protos(&["protobuf/tools/tools.proto"], &["protobuf/tools"]).unwrap();
 }

@@ -12,7 +12,7 @@ import { invoke } from "@tauri-apps/api/tauri";
 export default function MyApp({Component, pageProps}: AppProps) {
     useEffect(() => {
         const id = setInterval(async () => {
-            await invoke("receive_packet");
+            invoke("receive_packet").then((data) => console.log(data)).catch((_) => {});
         }, 16);
         return () => clearInterval(id);
     }, [])
