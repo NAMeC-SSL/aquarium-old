@@ -23,23 +23,11 @@ fn receive_packet(state: tauri::State<State>) -> Result<tools_packet::SoftwarePa
     let p_size = socket_state.socket.recv(&mut buf)?;
     let packet = tools_packet::SoftwarePacket::decode(Cursor::new(&buf[0..p_size]))
         .expect("Error - Decoding the packet");
-    
+
     Ok(packet)
 }
 
-/*async fn socket_run() {/*  */
-    let sock = UdpSocket::bind(format!("127.0.0.1:{}", 10100));
-    let mut buf = [0; 1024];
-
-    loop {
-        let (len, addr) = sock.recv_from(&mut buf);
-        println!("{:?} bytes received from {:?}", len, addr);
-        // Here sleep
-    }
-}
-*/
 fn main() {
-    // tauri::async_runtime::spawn(socket_run());
     let sock = UdpSocket::bind(format!("127.0.0.1:{}", 10100)).unwrap();
     sock.set_nonblocking(true).unwrap();
 

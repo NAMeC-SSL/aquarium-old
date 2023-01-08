@@ -29,12 +29,4 @@ fn main() -> Result<(), Error> {
         .register_descriptors(&descriptor_set)?
         .build(&[".tools_packet"])?;
     Ok(())
-    /*compile_packet(
-        "tools_packet",
-        &[
-            "protobuf/tools/tools.proto",
-            "protobuf/tools/software.proto",
-        ],
-        &["protobuf/tools"],
-    );*/
 }
