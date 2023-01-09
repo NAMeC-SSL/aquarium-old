@@ -1,7 +1,31 @@
-# Tauri + Next.js + Typescript
+# Aquarium - UI of CRAbE
 
-This template should help get you started developing with Tauri, Next.js and Typescript.
+This project used Tauri, Next.js, Redux and Typescript.
 
-## Recommended IDE Setup
+## Installation
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+Prerequisites :
+
+- [NodeJS](https://nodejs.org/en/)
+- [yarn](https://yarnpkg.com/)
+- [Tauri](https://tauri.app/v1/guides/getting-started/prerequisites/)
+
+Install npm packet with yarn :
+
+```bash
+yarn install
+```
+
+## Usage
+
+Launch the project in dev mode :
+
+```bash
+yarn run tauri dev
+```
+
+Build the project :
+
+```bash
+yarn run tauri build
+```
