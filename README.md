@@ -7,13 +7,12 @@ This project used Tauri, Next.js, Redux and Typescript.
 Prerequisites :
 
 - [NodeJS](https://nodejs.org/en/)
-- [yarn](https://yarnpkg.com/)
 - [Tauri](https://tauri.app/v1/guides/getting-started/prerequisites/)
 
 Install npm packet with yarn :
 
 ```bash
-yarn install
+npm install
 ```
 
 ## Usage
@@ -21,11 +20,11 @@ yarn install
 Launch the project in dev mode :
 
 ```bash
-yarn run tauri dev
+npm run tauri dev
 ```
 
 Build the project :
 
 ```bash
-yarn run tauri build
+npm run tauri build
 ```
