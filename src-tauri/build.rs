@@ -7,7 +7,7 @@ use std::path::PathBuf;
 fn main() -> Result<(), Error> {
     tauri_build::build();
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("protobuf/tools");
-    let proto_files = vec![root.join("software.proto")];
+    let proto_files = vec![root.join("software.proto"), root.join("tools.proto")];
 
     for proto_file in &proto_files {
         println!("cargo:rerun-if-changed={}", proto_file.display());
