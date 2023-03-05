@@ -2,6 +2,8 @@
 
 This project used Tauri, Next.js, Redux and Typescript.
 
+This project is deprecated in favor of another UI that will be available in 08/03/2023.
+
 ## Installation
 
 Prerequisites :
